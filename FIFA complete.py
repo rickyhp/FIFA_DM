@@ -19,8 +19,8 @@ dataset.loc[dataset.Wage.str.contains('K') == True, "Wage"] = pd.to_numeric(data
 dataset.to_csv('CompleteDataset_updated.csv')
 
 #X = dataset.iloc[:, [10,11,14,17,18,19,20,21,22,24,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52]].values 
-X = dataset.iloc[:, [14]].values
-y = dataset.loc[:, 'Rating'].values
+X = dataset.iloc[:, [6]].values
+y = pd.to_numeric(dataset.loc[:, 'Value'].values)
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.cross_validation import train_test_split
@@ -41,7 +41,7 @@ print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 # Visualising the Test set results
 plt.scatter(X_test, y_test, color = 'red')
 plt.plot(X_train, regressor.predict(X_train), color = 'blue')
-plt.title('Age vs Rating (Test set)')
-plt.xlabel('Age')
-plt.ylabel('Rating')
+plt.title('Overall vs Value (Test set)')
+plt.xlabel('Overall')
+plt.ylabel('Value')
 plt.show()
