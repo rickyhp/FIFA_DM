@@ -16,19 +16,6 @@ dataset$Wage = ifelse(grepl("M",dataset$Wage),
                        as.numeric(gsub("M","",dataset$Wage))*1000000,
                        as.numeric(gsub("K","",dataset$Wage))*1000)
 
-# Categorise rating
-##dataset$Rating = ifelse(dataset$Rating >= 0 & dataset$Rating <= 25,
-##                     1,
-##                     dataset$Rating)
-##dataset$Rating = ifelse(dataset$Rating >= 26 & dataset$Rating <= 50,
-##                        2,
-##                        dataset$Rating)
-##dataset$Rating = ifelse(dataset$Rating >= 51 & dataset$Rating <= 75,
-##                        3,
-##                        dataset$Rating)
-##dataset$Rating = ifelse(dataset$Rating >= 76 & dataset$Rating <= 100,
-##                        4,
-##                        dataset$Rating)
 
 # Splitting the dataset into the Training set and Test set
 # install.packages('caTools')
@@ -38,16 +25,57 @@ split = sample.split(dataset$Value, SplitRatio = 0.8)
 training_set = subset(dataset, split == TRUE)
 test_set = subset(dataset, split == FALSE)
 
-# Fitting Multiple Linear Regression to the Training set
-regressor = lm(formula = Value~Overall+Potential,
+# Fitting Linear Regression to the training set
+regressor = lm(formula = Value~Overall,
                data = training_set)
-summary(regressor)
-
 # Predicting the Test set results
 y_pred = predict(regressor, newdata = test_set)
 
-# Mean absolute percentage error (MAPE). Lower the better.
-#mape = mean(abs(y_pred - test_set$Value)/test_set$Value)
+# Fitting Polynomial Linear Regression to the training set
+training_set$Overall2 = training_set$Overall^2
+training_set$Overall3 = training_set$Overall^3
+training_set$Overall4 = training_set$Overall^4
+
+poly_regressor = lm(formula = Value~Overall+Overall2+Overall3+Overall4,
+               data = training_set)
+
+# Visualising the Linear Regression results
+# install.packages('ggplot2')
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = dataset$Overall, y = dataset$Value),
+             colour = 'red') +
+  geom_line(aes(x = dataset$Overall, y = predict(regressor, newdata = dataset)),
+            colour = 'blue') +
+  ggtitle('Value vs Overall (Linear Regression)') +
+  xlab('Overall') +
+  ylab('Value')
+
+# Visualising the Regression Model results (for higher resolution and smoother curve)
+# install.packages('ggplot2')
+library(ggplot2)
+x_grid = seq(min(dataset$Overall), max(dataset$Overall), 0.1)
+ggplot() +
+  geom_point(aes(x = dataset$Overall, y = dataset$Value),
+             colour = 'red') +
+  geom_line(aes(x = x_grid, y = predict(poly_regressor,
+                                        newdata = data.frame(Overall = x_grid,
+                                                             Overall2 = x_grid^2,
+                                                             Overall3 = x_grid^3,
+                                                             Overall4 = x_grid^4))),
+            colour = 'blue') +
+  ggtitle('Value vs Overall (Polynomial Regression)') +
+  xlab('Overall') +
+  ylab('Value')
+
+# Predicting a new result with Linear Regression
+predict(regressor, data.frame(Overall = 94))
+
+# Predicting a new result with Polynomial Regression
+predict(poly_regressor, data.frame(Overall = 94,
+                                   Overall2 = 94^2,
+                                   Overall3 = 94^3,
+                                   Overall4 = 94^4))
 
 # k-Fold cross validation
 library(DAAG)
