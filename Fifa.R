@@ -77,10 +77,13 @@ predict(poly_regressor, data.frame(Overall = 94,
                                    Overall3 = 94^3,
                                    Overall4 = 94^4))
 
-# k-Fold cross validation
+# k-Fold cross validation for linear reg model
 library(DAAG)
-cvResults <- suppressWarnings(CVlm(data=dataset, form.lm=Value~Overall+Potential, m=5, dots=FALSE, seed=10, legend.pos="topleft",  printit=FALSE, main="Small symbols are predicted values while bigger ones are actuals."));  # performs the CV
+cvResults <- suppressWarnings(CVlm(data=dataset, form.lm=Value~Overall, m=5, dots=FALSE, seed=10, legend.pos="topleft",  printit=FALSE, main="Small symbols are predicted values while bigger ones are actuals."));  # performs the CV
+# residual sum of squares
 attr(cvResults, 'ms')
+# degrees of freedom
+attr(cvResults, 'df')
 
 # Plot
 plot(y_pred)
