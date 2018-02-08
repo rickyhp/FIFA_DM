@@ -1,14 +1,20 @@
 # Importing the dataset
-dataset = read.csv('FullData.csv')
+dataset = read.csv('CompleteDataset.csv')
 
 # Data pre-processing
-dataset = dataset[,c(2,10,11,12,15,18:53)]
+dataset = dataset[,c(3,7,8,11,12,13:47)]
+
 #dataset$Nationality <- as.numeric(as.factor(dataset$Nationality))
+dataset$Value <- gsub("\342\202\254", "", dataset$Value)
+dataset$Wage <- gsub("\342\202\254", "", dataset$Wage)
 
-
-
-dataset$Height <- as.numeric(gsub(" cm", "", dataset$Height))
-dataset$Weight <- as.numeric(gsub(" kg", "", dataset$Weight))
+#transform M and K to digits for Value and Wage column
+dataset$Value = ifelse(grepl("M",dataset$Value),
+                        as.numeric(gsub("M","",dataset$Value))*1000000,
+                        as.numeric(gsub("K","",dataset$Value))*1000)
+dataset$Wage = ifelse(grepl("M",dataset$Wage),
+                       as.numeric(gsub("M","",dataset$Wage))*1000000,
+                       as.numeric(gsub("K","",dataset$Wage))*1000)
 
 # Categorise rating
 ##dataset$Rating = ifelse(dataset$Rating >= 0 & dataset$Rating <= 25,
