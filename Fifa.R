@@ -39,7 +39,7 @@ training_set = subset(dataset, split == TRUE)
 test_set = subset(dataset, split == FALSE)
 
 # Fitting Multiple Linear Regression to the Training set
-regressor = lm(formula = Value~Overall,
+regressor = lm(formula = Value~Overall+Potential,
                data = training_set)
 summary(regressor)
 
@@ -51,7 +51,7 @@ y_pred = predict(regressor, newdata = test_set)
 
 # k-Fold cross validation
 library(DAAG)
-cvResults <- suppressWarnings(CVlm(data=dataset, form.lm=Value~Overall, m=5, dots=FALSE, seed=10, legend.pos="topleft",  printit=FALSE, main="Small symbols are predicted values while bigger ones are actuals."));  # performs the CV
+cvResults <- suppressWarnings(CVlm(data=dataset, form.lm=Value~Overall+Potential, m=5, dots=FALSE, seed=10, legend.pos="topleft",  printit=FALSE, main="Small symbols are predicted values while bigger ones are actuals."));  # performs the CV
 attr(cvResults, 'ms')
 
 # Plot
